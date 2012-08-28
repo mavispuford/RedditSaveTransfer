@@ -18,16 +18,16 @@ namespace RedditSaveTransfer
     {
         string userAgent = "Reddit Saved Post Transfer Tool by MavisPuford";    //User Agent string
 
-        CookieContainer redditCookie1;                              //Cookie of the FROM user account
+        CookieContainer redditCookie1;                              //Cookie of the LEFT user account
         string cookieFileName1 = "cookie1";
 
-        CookieContainer redditCookie2;                              //Cookie of the TO user account
+        CookieContainer redditCookie2;                              //Cookie of the RIGHT user account
         string cookieFileName2 = "cookie2";
 
-        List<string> cookieJar = new List<string>();                //For keeping track of the different cookies used during the session
+        List<string> cookieJar = new List<string>();                //For keeping track of the different cookie filenames used during the session
 
-        List<SavedListing> savedPosts = new List<SavedListing>();   //Saved posts that were grabbed from the FROM account
-        List<SavedListing> toSave = new List<SavedListing>();       //Saved posts that will be saved to the TO account
+        List<SavedListing> savedPosts = new List<SavedListing>();   //Saved posts that were grabbed from the LEFT account
+        List<SavedListing> toSave = new List<SavedListing>();       //Saved posts that will be saved to the RIGHT account
         int currentPost = 0;                                        //Currently selected post (for the DataGridView)
 
         public Form1()
@@ -106,12 +106,12 @@ namespace RedditSaveTransfer
             return container;
         }
 
-        private void LogIn(bool fromAccount)
+        private void LogIn(bool leftAccount)
         {
             string username, password, filename;
             CookieContainer cookie;
 
-            if (fromAccount)
+            if (leftAccount)
             {
                 username = txtUsername1.Text;
                 password = txtPassword1.Text;
@@ -136,7 +136,7 @@ namespace RedditSaveTransfer
 
             thread.Thread.ProgressChanged += new ProgressChangedEventHandler(Login_ProgressChanged);
 
-            if (fromAccount)
+            if (leftAccount)
                 thread.Thread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Login_Completed_1);
             else
                 thread.Thread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Login_Completed_2);
@@ -297,7 +297,7 @@ namespace RedditSaveTransfer
         {
             statusLabel.Text = "DONE SAVING";
 
-            //If we need to unsave the posts in the FROM account
+            //If we need to unsave the posts in the LEFT account
             if (chkUnsaveAfter.Checked)
             {
                 SavePostThread thread = new SavePostThread(redditCookie1, userAgent, toSave, false);

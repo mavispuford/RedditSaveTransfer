@@ -10,7 +10,6 @@ namespace RedditSaveTransfer
 {
     class LogInThread : WorkerThread
     {
-
         private string mUsername;           //Username of the account
         private string mPassword;           //Password of the account
         private string mUserAgent;          //User Agent string

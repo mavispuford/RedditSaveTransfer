@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 namespace RedditSaveTransfer
 {
     /// <summary>
-    /// Saves the given list of posts to the specified Reddit account
+    /// Saves/Unsaves the given list of posts to the specified Reddit account
     /// </summary>
     class SavePostThread : WorkerThread
     {
@@ -164,7 +164,7 @@ namespace RedditSaveTransfer
         }
 
         /// <summary>
-        /// Send a GET to the specified server
+        /// Sends a GET to the specified server
         /// </summary>
         /// <param name="uri">URI to send</param>
         /// <returns>Server response</returns>
