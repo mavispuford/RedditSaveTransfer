@@ -1,4 +1,4 @@
-﻿Reddit Saved Post Transfer Tool
+﻿Reddit Saved Post Transfer Tool (Requires Microsoft .NET Framework 4)
 By MavisPuford
 
 Yeah, I know.  Creative name!  :)
@@ -20,10 +20,10 @@ it's even harder to find it).  So now I can export my r/food posts to
 an HTML file, open it up in my browser and look at them all in one
 place.  CTRL + F, "cinnamon".  Oh, there it is!
 
-This is also nice for programs like Evernote, Onenote, etc.  Export all
-your saved posts from r/frugal, import them into Evernote/whatever and
-you've got them all in a place where they are searchable and they won't
-be lost.
+This is also nice for programs like Evernote, Onenote, whatevernote.
+Export all your saved posts from r/frugal, import them into whatever
+program you use, and you've got them all in a place where they are 
+searchable and they won't be lost.
 
 Or if I want to just have a Reddit account for r/food, I can create
 one and transfer my r/food saved links to that.  
