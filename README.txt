@@ -1,4 +1,4 @@
-﻿Reddit Saved Post Transfer Tool (Requires Microsoft .NET Framework 4)
+﻿Reddit Saved Post Transfer Tool (Requires Microsoft .NET Framework 3.5)
 By MavisPuford
 
 Yeah, I know.  Creative name!  :)
@@ -51,3 +51,12 @@ the post and select its id, then click Unsave.
 
 They have to be done one at a time, and Reddit's servers have limits
 on how often you can make requests (about one request every 2 seconds).
+
+SOURCE INFO:
+
+You will need Newtonsoft Json.NET in order for the project to compile.
+The best way to do that is to download and install NuGet 
+(it's free):
+
+http://nuget.org/
+

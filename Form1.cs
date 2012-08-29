@@ -57,7 +57,7 @@ namespace RedditSaveTransfer
 
         private void btnLoadSaved_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(txtUsername1.Text) && !string.IsNullOrWhiteSpace(txtPassword1.Text))
+            if (!String.IsNullOrEmpty(txtUsername1.Text) && !String.IsNullOrEmpty(txtPassword1.Text))
             {
                 btnCopyPosts.Enabled = false;
                 btnExport.Enabled = false;
@@ -68,6 +68,9 @@ namespace RedditSaveTransfer
 
                 cookieFileName1 = txtUsername1.Text;
                 redditCookie1 = Loadcookie(cookieFileName1);
+
+                //Add the cookie filename to the cookies list for deletion later
+                AddToCookieJar(txtUsername1.Text);
 
                 if (redditCookie1 == null)
                 {
@@ -126,9 +129,6 @@ namespace RedditSaveTransfer
                 filename = cookieFileName2;
             }
 
-            //Add the cookie filename to the cookies list for deletion later
-            AddToCookieJar(filename);
-
             statusLabel.Text = "Logging In...";
 
             //Start the LogInthread
@@ -182,7 +182,7 @@ namespace RedditSaveTransfer
 
         void Login_Completed_2(object sender, RunWorkerCompletedEventArgs e)
         {
-            JObject result = JObject.Parse((string)e.Result);
+            JObject result = (JObject)e.Result;
 
             //Check for server errors
             if (result["json"].SelectToken("errors").HasValues)
@@ -505,7 +505,7 @@ namespace RedditSaveTransfer
 
         private void btnCopyPosts_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(txtUsername2.Text) && !string.IsNullOrWhiteSpace(txtPassword2.Text))
+            if (!String.IsNullOrEmpty(txtUsername2.Text) && !String.IsNullOrEmpty(txtPassword2.Text))
             {
                 string message = "";
 
@@ -530,6 +530,9 @@ namespace RedditSaveTransfer
 
                     cookieFileName2 = txtUsername2.Text;
                     redditCookie2 = Loadcookie(cookieFileName2);
+
+                    //Add the cookie filename to the cookies list for deletion later
+                    AddToCookieJar(txtUsername2.Text);
 
                     if (redditCookie2 == null)
                     {
