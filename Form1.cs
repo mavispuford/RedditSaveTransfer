@@ -37,6 +37,17 @@ namespace RedditSaveTransfer
             redditCookie1 = new CookieContainer();
             redditCookie2 = new CookieContainer();
         }
+        
+        protected override void OnLoad(EventArgs e)
+        {
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            //For testing different dpi settings
+
+            //this.Font = new Font(this.Font.FontFamily, this.Font.Size * 120 / 96);
+            //this.Font = new Font(this.Font.FontFamily, this.Font.Size * 144 / 96);
+            //this.Font = new Font(this.Font.FontFamily, this.Font.Size * 192 / 96);
+            base.OnLoad(e);
+        }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {

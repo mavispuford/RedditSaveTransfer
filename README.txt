@@ -55,8 +55,7 @@ on how often you can make requests (about one request every 2 seconds).
 SOURCE INFO:
 
 You will need Newtonsoft Json.NET in order for the project to compile.
-The best way to do that is to download and install NuGet 
-(it's free):
+The best way to do that is to download and install NuGet (it's free):
 
 http://nuget.org/
 
