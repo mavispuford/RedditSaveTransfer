@@ -161,7 +161,7 @@ namespace RedditSaveTransfer
 
         void Login_Completed_1(object sender, RunWorkerCompletedEventArgs e)
         {
-            JObject result = JObject.Parse((string)e.Result);
+            JObject result = (JObject)e.Result;
 
             //Check for server errors
             if (result["json"].SelectToken("errors").HasValues)

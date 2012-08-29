@@ -5,6 +5,7 @@ using System.Text;
 using System.Net;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json.Linq;
 
 namespace RedditSaveTransfer
 {
@@ -32,7 +33,7 @@ namespace RedditSaveTransfer
 
             Thread.ReportProgress(0);
 
-            string result = LogIn();
+            JObject result = LogIn();
             
             Console.WriteLine("LogIn result: " + result);
 
@@ -53,7 +54,7 @@ namespace RedditSaveTransfer
         /// Logs into the reddit servers
         /// </summary>
         /// <returns>Server response</returns>
-        private string LogIn()
+        private JObject LogIn()
         {
             string url = "http://www.reddit.com/api/login/" + mUsername;
             Dictionary<string, string> body = new Dictionary<string, string>();
@@ -94,10 +95,16 @@ namespace RedditSaveTransfer
                 }
             }
 
-            //Save the cookie
-            SaveCookie(mCookie, mCookieFileName);
+            JObject jResult = JObject.Parse(result);
+            
+            //If there are no errors
+            if (!jResult["json"].SelectToken("errors").HasValues)
+            {
+                //Save the cookie
+                SaveCookie(mCookie, mCookieFileName);
+            }
 
-            return result;
+            return jResult;
         }
 
         /// <summary>
