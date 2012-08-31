@@ -6,6 +6,7 @@ using System.Net;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json.Linq;
+using System.Windows.Forms;
 
 namespace RedditSaveTransfer
 {
@@ -67,32 +68,50 @@ namespace RedditSaveTransfer
 
             Uri uri = new Uri(url);
             request = (HttpWebRequest)WebRequest.Create(uri);
+
+            //Grab the default proxy from IE Internet Settings
+            var proxy = WebRequest.GetSystemWebProxy();
+            WebProxy wp = new WebProxy();
+            wp.Credentials = proxy.Credentials;
+            wp.Address = proxy.GetProxy(uri);
+            request.Proxy = wp;
+            
             request.CookieContainer = mCookie;
             request.UserAgent = mUserAgent;
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
             request.ContentLength = postData.Length;
 
-            //Encode the POST data
-            using (Stream writeStream = request.GetRequestStream())
-            {
-                UTF8Encoding encoding = new UTF8Encoding();
-                byte[] bytes = encoding.GetBytes(postData);
-                writeStream.Write(bytes, 0, bytes.Length);
-            }
-
-            //Send the request, get the server response
             string result = string.Empty;
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+
+            try
             {
-                using (Stream responseStream = response.GetResponseStream())
+
+                //Encode the POST data
+                using (Stream writeStream = request.GetRequestStream())
                 {
-                    using (StreamReader readStream = new StreamReader(responseStream, Encoding.UTF8))
+                    UTF8Encoding encoding = new UTF8Encoding();
+                    byte[] bytes = encoding.GetBytes(postData);
+                    writeStream.Write(bytes, 0, bytes.Length);
+                }
+
+                //Send the request, get the server response
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                {
+                    using (Stream responseStream = response.GetResponseStream())
                     {
-                        result = readStream.ReadToEnd();
-                        Console.WriteLine(mCookie.GetCookieHeader(new System.Uri("http://www.reddit.com/api/login/" + mUsername)));
+                        using (StreamReader readStream = new StreamReader(responseStream, Encoding.UTF8))
+                        {
+                            result = readStream.ReadToEnd();
+                            Console.WriteLine(mCookie.GetCookieHeader(new System.Uri("http://www.reddit.com/api/login/" + mUsername)));
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There was a problem connecting to the server. Exception: " + ex.Message);
+                return null;
             }
 
             JObject jResult = JObject.Parse(result);

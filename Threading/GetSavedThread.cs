@@ -115,6 +115,13 @@ namespace RedditSaveTransfer
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;
 
+            //Grab the default proxy from IE Internet Settings
+            var proxy = WebRequest.GetSystemWebProxy();
+            WebProxy wp = new WebProxy();
+            wp.Credentials = proxy.Credentials;
+            wp.Address = proxy.GetProxy(request.RequestUri);
+            request.Proxy = wp;
+
             string result = string.Empty;
 
             try

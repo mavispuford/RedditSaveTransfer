@@ -139,6 +139,13 @@ namespace RedditSaveTransfer
             request.ContentType = "application/x-www-form-urlencoded";
             request.ContentLength = data.Length;
 
+            //Grab the default proxy from IE Internet Settings
+            var proxy = WebRequest.GetSystemWebProxy();
+            WebProxy wp = new WebProxy();
+            wp.Credentials = proxy.Credentials;
+            wp.Address = proxy.GetProxy(request.RequestUri);
+            request.Proxy = wp;
+
             //Encode the data
             using (Stream writeStream = request.GetRequestStream())
             {
@@ -179,6 +186,13 @@ namespace RedditSaveTransfer
             request.ContentType = "application/x-www-form-urlencoded";
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;
+
+            //Grab the default proxy from IE Internet Settings
+            var proxy = WebRequest.GetSystemWebProxy();
+            WebProxy wp = new WebProxy();
+            wp.Credentials = proxy.Credentials;
+            wp.Address = proxy.GetProxy(request.RequestUri);
+            request.Proxy = wp;
 
             string result = string.Empty;
 

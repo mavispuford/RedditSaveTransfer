@@ -172,44 +172,62 @@ namespace RedditSaveTransfer
 
         void Login_Completed_1(object sender, RunWorkerCompletedEventArgs e)
         {
-            JObject result = (JObject)e.Result;
-
-            //Check for server errors
-            if (result["json"].SelectToken("errors").HasValues)
+            if (e.Result != null)
             {
-                IList<string> errors = result["json"]["errors"][0].Select(t => (string)t).ToList();
-                MessageBox.Show("Error logging in. Server message:\n\"" + errors[1] + "\"");
+                JObject result = (JObject)e.Result;
 
-                statusLabel.Text = "Login Error";
+                //Check for server errors
+                if (result["json"].SelectToken("errors").HasValues)
+                {
+                    IList<string> errors = result["json"]["errors"][0].Select(t => (string)t).ToList();
+                    MessageBox.Show("Error logging in. Server message:\n\"" + errors[1] + "\"");
 
-                btnLoadSaved.Enabled = true;
+                    statusLabel.Text = "Login Error";
+
+                    btnLoadSaved.Enabled = true;
+                }
+                else
+                {
+                    toolStripProgressBar1.Value = 100;
+                    GrabPosts();
+                }
             }
             else
             {
-                toolStripProgressBar1.Value = 100;
-                GrabPosts();
+                statusLabel.Text = "Login Error";
+
+                btnLoadSaved.Enabled = true;
             }
         }
 
         void Login_Completed_2(object sender, RunWorkerCompletedEventArgs e)
         {
-            JObject result = (JObject)e.Result;
-
-            //Check for server errors
-            if (result["json"].SelectToken("errors").HasValues)
+            if (e.Result != null)
             {
-                IList<string> errors = result["json"]["errors"][0].Select(t => (string)t).ToList();
-                MessageBox.Show("Error logging in. Server message:\n\"" + errors[1] + "\"");
+                JObject result = (JObject)e.Result;
 
-                statusLabel.Text = "Login Error";
+                //Check for server errors
+                if (result["json"].SelectToken("errors").HasValues)
+                {
+                    IList<string> errors = result["json"]["errors"][0].Select(t => (string)t).ToList();
+                    MessageBox.Show("Error logging in. Server message:\n\"" + errors[1] + "\"");
 
-                btnLoadSaved.Enabled = true;
-                btnCopyPosts.Enabled = true;
+                    statusLabel.Text = "Login Error";
+
+                    btnLoadSaved.Enabled = true;
+                    btnCopyPosts.Enabled = true;
+                }
+                else
+                {
+                    toolStripProgressBar1.Value = 100;
+                    SavePosts();
+                }
             }
             else
             {
-                toolStripProgressBar1.Value = 100;
-                SavePosts();
+                statusLabel.Text = "Login Error";
+
+                btnLoadSaved.Enabled = true;
             }
         }
 
