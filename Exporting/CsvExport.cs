@@ -91,7 +91,6 @@ namespace RedditSaveTransfer
                 output = output.Replace("\n", "");
 
             return output;
-
         }
     }
 }

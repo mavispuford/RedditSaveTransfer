@@ -661,5 +661,25 @@ namespace RedditSaveTransfer
             }
         }
 
+        private void btnExportOptions_Click(object sender, EventArgs e)
+        {
+            SelectPropertiesWindow properties = new SelectPropertiesWindow();
+
+            properties.StartPosition = FormStartPosition.CenterParent;
+
+            DialogResult result = properties.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                SelectPropertiesWindow.PropertiesToExport.Clear();
+
+                foreach (Object p in properties.chkListBoxProps.CheckedItems)
+                    SelectPropertiesWindow.PropertiesToExport.Add(p.ToString());
+
+                foreach (string s in SelectPropertiesWindow.PropertiesToExport)
+                    Console.WriteLine(s);
+            }
+        }
+
     }
 }

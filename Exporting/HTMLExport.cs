@@ -34,16 +34,9 @@ namespace RedditSaveTransfer
 
             List<string> fields = new List<string>();
 
-            fields.Add("id");
-            fields.Add("subreddit");
-            fields.Add("author");
-            fields.Add("domain");
-            fields.Add("over_18");
-            fields.Add("url");
-            fields.Add("title");
-            fields.Add("score");
-            fields.Add("num_comments");
-            fields.Add("created_utc");
+            //Grab the property names that will be exported
+            foreach (string p in SelectPropertiesWindow.PropertiesToExport)
+                fields.Add(p);
 
             sb.Append("<!DOCTYPE html>\n<html>\n");
 

@@ -57,11 +57,10 @@
             this.btnPrevious = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-
+            this.btnExportOptions = new System.Windows.Forms.Button();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
@@ -282,6 +281,7 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.btnExportOptions);
             this.splitContainer2.Panel2.Controls.Add(this.statusStrip1);
             this.splitContainer2.Panel2.Controls.Add(this.btnUnsave);
             this.splitContainer2.Panel2.Controls.Add(this.btnExport);
@@ -320,7 +320,7 @@
             this.btnUnsave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUnsave.Enabled = false;
             this.btnUnsave.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnUnsave.Location = new System.Drawing.Point(463, 292);
+            this.btnUnsave.Location = new System.Drawing.Point(433, 292);
             this.btnUnsave.Name = "btnUnsave";
             this.btnUnsave.Size = new System.Drawing.Size(82, 23);
             this.btnUnsave.TabIndex = 5;
@@ -334,7 +334,7 @@
             this.btnExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExport.Enabled = false;
             this.btnExport.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnExport.Location = new System.Drawing.Point(551, 292);
+            this.btnExport.Location = new System.Drawing.Point(521, 292);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(87, 23);
             this.btnExport.TabIndex = 9;
@@ -386,6 +386,19 @@
             this.dataGridView1.Size = new System.Drawing.Size(626, 283);
             this.dataGridView1.TabIndex = 1;
             // 
+            // btnExportOptions
+            // 
+            this.btnExportOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportOptions.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExportOptions.Location = new System.Drawing.Point(614, 292);
+            this.btnExportOptions.Name = "btnExportOptions";
+            this.btnExportOptions.Size = new System.Drawing.Size(24, 23);
+            this.btnExportOptions.TabIndex = 11;
+            this.btnExportOptions.Text = "...";
+            this.toolTip1.SetToolTip(this.btnExportOptions, "Select which properties should be exported to HTML");
+            this.btnExportOptions.UseVisualStyleBackColor = true;
+            this.btnExportOptions.Click += new System.EventHandler(this.btnExportOptions_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -401,12 +414,10 @@
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
-
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
-
             this.splitContainer2.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
@@ -444,6 +455,7 @@
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button btnExportOptions;
     }
 }
 
