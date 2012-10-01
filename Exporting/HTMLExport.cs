@@ -58,7 +58,7 @@ namespace RedditSaveTransfer
             "    margin-bottom: 50px;\n" +
             "    margin-left: 100px;\n" +
             "    margin-right: 100px;\n" +
-            "    min-width: 800px;\n" +
+            "    min-width: 300px;\n" +
             "    text-align: left;\n" +
             //Border
             "    border-collapse: collapse;\n" +
@@ -139,6 +139,17 @@ namespace RedditSaveTransfer
                     else
                         sb.Append("<tr class=\"odd\">\n");
 
+                    string commentsURL = "http://www.reddit.com/comments/";
+
+                    foreach (KeyValuePair<string, string> pair in listing.Properties)
+                    {
+                        if (pair.Key.Contains("id"))
+                        {
+                            commentsURL += pair.Value;
+                            break;
+                        }
+                    }
+
                     foreach (KeyValuePair<string, string> pair in listing.Properties)
                     {
                         if (fields.Contains(pair.Key))
@@ -146,11 +157,13 @@ namespace RedditSaveTransfer
                             if (pair.Key.Contains("url"))
                                 sb.Append("<td title=\"" + pair.Value + "\"> <a href=\"" + pair.Value + "\">" + AddWordBreaks(Shorten(pair.Value, 40), 10) +  "</a></td>\n");
                             else if (pair.Key.Contains("id"))
-                                sb.Append("<td> <a href=\"http://www.reddit.com/comments/" + pair.Value + "\">" + pair.Value + "</a></td>\n");
+                                sb.Append("<td> <a href=\"" + commentsURL + "\">" + pair.Value + "</a></td>\n");
                             else if (pair.Key.Contains("over_18"))
                                 sb.Append("<td>" + (bool.Parse(pair.Value) ? "<font color=\"red\">NSFW</font>" : "No") + "</td>\n");
                             else if (pair.Key.Contains("created_utc"))
                                 sb.Append("<td>" + new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(double.Parse(pair.Value)).ToShortDateString() + "</td>\n");
+                            else if (pair.Key.Contains("title"))
+                                sb.Append("<td> <a href=\"" + commentsURL + "\">" + MakeValueCsvFriendly(pair.Value)).Append("</a></td>\n");
                             else
                                 sb.Append("<td>" + MakeValueCsvFriendly(pair.Value)).Append("</td>\n");
                         }

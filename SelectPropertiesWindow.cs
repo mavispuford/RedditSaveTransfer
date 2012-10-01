@@ -13,7 +13,8 @@ namespace RedditSaveTransfer
     {
         public static List<string> PropertiesToExport = new List<string>();
 
-        string[] defaultChecked = { "id", "subreddit", "author", "domain", "over_18", "url", "title", "score", "num_comments", "created_utc" };
+        //string[] defaultChecked = { "id", "subreddit", "author", "domain", "over_18", "url", "title", "score", "num_comments", "created_utc" };
+        string[] defaultChecked = { "subreddit", "url", "title", "created_utc" };
 
         public SelectPropertiesWindow()
         {
