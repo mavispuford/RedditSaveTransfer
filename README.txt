@@ -59,3 +59,6 @@ The best way to do that is to download and install NuGet (it's free):
 
 http://nuget.org/
 
+You will also need to enable NuGet package restore which can be found
+in Visual Studio under "Tools > Options > Package Manager" you need to
+check the checkbox for "Allow NuGet to download missing packages during build".
