@@ -1,9 +1,9 @@
-﻿Reddit Saved Post Transfer Tool (Requires Microsoft .NET Framework 3.5)
-By MavisPuford
+﻿#Reddit Saved Post Transfer Tool#
+By *MavisPuford*
 
 Yeah, I know.  Creative name!  :)
 
-DESCRIPTION:
+##DESCRIPTION##
 
 This tool (assuming it works right) lets you load up your saved posts
 from Reddit.  From there you can Export them to a HTML/CSV file, save
@@ -30,7 +30,7 @@ one and transfer my r/food saved links to that.
 
 You get the idea...
 
-INSTRUCTIONS:
+##INSTRUCTIONS##
 
 First, put in your credentials and click Load Saved Posts.
 
@@ -52,12 +52,13 @@ the post and select its id, then click Unsave.
 They have to be done one at a time, and Reddit's servers have limits
 on how often you can make requests (about one request every 2 seconds).
 
-SOURCE INFO:
+##SOURCE INFO##
+Requires Microsoft .NET Framework 3.5.
 
-You will need Newtonsoft Json.NET in order for the project to compile.
+You will need [Newtonsoft Json.NET](http://www.nuget.org/packages/Newtonsoft.Json/) in order for the project to compile.
 The best way to do that is to download and install NuGet (it's free):
 
-http://nuget.org/
+> [http://nuget.org](http://nuget.org)
 
 You will also need to enable NuGet package restore which can be found
 in Visual Studio under "Tools > Options > Package Manager" you need to
