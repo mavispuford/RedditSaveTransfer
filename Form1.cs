@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Net;
 using System.IO;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows.Forms;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RedditSaveTransfer.Exporting;
+using RedditSaveTransfer.Properties;
+using RedditSaveTransfer.Threading;
 
 namespace RedditSaveTransfer
 {
     public partial class Form1 : Form
     {
-        string userAgent = "Reddit Saved Post Transfer Tool by MavisPuford";    //User Agent string
-
         CookieContainer redditCookie1;                              //Cookie of the LEFT user account
         string cookieFileName1 = "cookie1";
 
@@ -28,7 +26,7 @@ namespace RedditSaveTransfer
 
         List<SavedListing> savedPosts = new List<SavedListing>();   //Saved posts that were grabbed from the LEFT account
         List<SavedListing> toSave = new List<SavedListing>();       //Saved posts that will be saved to the RIGHT account
-        int currentPost = 0;                                        //Currently selected post (for the DataGridView)
+        int _currentPost;                                           //Currently selected post (for the DataGridView)
 
         public Form1()
         {
@@ -36,6 +34,12 @@ namespace RedditSaveTransfer
 
             redditCookie1 = new CookieContainer();
             redditCookie2 = new CookieContainer();
+
+            if (Settings.Default.SaveUsername1)
+                txtUsername1.Text = Settings.Default.Username1;
+
+            if (Settings.Default.SaveUsername2)
+                txtUsername2.Text = Settings.Default.Username2;
         }
         
         protected override void OnLoad(EventArgs e)
@@ -56,7 +60,7 @@ namespace RedditSaveTransfer
             //Delete the cookies that were used
             try
             {
-                foreach (string s in cookieJar)
+                foreach (var s in cookieJar)
                     File.Delete(s);
             }
             catch (Exception ex)
@@ -70,6 +74,12 @@ namespace RedditSaveTransfer
         {
             if (!String.IsNullOrEmpty(txtUsername1.Text) && !String.IsNullOrEmpty(txtPassword1.Text))
             {
+                if (Settings.Default.SaveUsername1)
+                {
+                    Settings.Default.Username1 = txtUsername1.Text;
+                    Settings.Default.Save();
+                }
+
                 btnCopyPosts.Enabled = false;
                 btnExport.Enabled = false;
                 btnLoadSaved.Enabled = false;
@@ -105,8 +115,8 @@ namespace RedditSaveTransfer
 
             try
             {
-                Stream stream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.None);
-                BinaryFormatter bFormatter = new BinaryFormatter();
+                var stream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.None);
+                var bFormatter = new BinaryFormatter();
 
                 container = (CookieContainer)bFormatter.Deserialize(stream);
 
@@ -143,16 +153,16 @@ namespace RedditSaveTransfer
             statusLabel.Text = "Logging In...";
 
             //Start the LogInthread
-            LogInThread thread = new LogInThread(username, password, ref cookie, filename, userAgent);
+            var logInThread = new LogInThread(username, password, ref cookie, filename);
 
-            thread.Thread.ProgressChanged += new ProgressChangedEventHandler(Login_ProgressChanged);
+            logInThread.Thread.ProgressChanged += Login_ProgressChanged;
 
             if (leftAccount)
-                thread.Thread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Login_Completed_1);
+                logInThread.Thread.RunWorkerCompleted += Login_Completed_1;
             else
-                thread.Thread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Login_Completed_2);
+                logInThread.Thread.RunWorkerCompleted += Login_Completed_2;
 
-            thread.Start();
+            logInThread.Start();
         }
 
         /// <summary>
@@ -174,7 +184,7 @@ namespace RedditSaveTransfer
         {
             if (e.Result != null)
             {
-                JObject result = (JObject)e.Result;
+                var result = (JObject)e.Result;
 
                 //Check for server errors
                 if (result["json"].SelectToken("errors").HasValues)
@@ -204,7 +214,7 @@ namespace RedditSaveTransfer
         {
             if (e.Result != null)
             {
-                JObject result = (JObject)e.Result;
+                var result = (JObject)e.Result;
 
                 //Check for server errors
                 if (result["json"].SelectToken("errors").HasValues)
@@ -237,12 +247,12 @@ namespace RedditSaveTransfer
             FilterPosts(chkMatchRows.Checked);
 
             //Start the save thread
-            SavePostThread thread = new SavePostThread(redditCookie2, userAgent, toSave, true);
+            var davePostThread = new SavePostThread(redditCookie2, toSave, true);
 
-            thread.Thread.ProgressChanged += new ProgressChangedEventHandler(SavePosts_ProgressChanged);
-            thread.Thread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SavePosts_Completed);
+            davePostThread.Thread.ProgressChanged += SavePosts_ProgressChanged;
+            davePostThread.Thread.RunWorkerCompleted += SavePosts_Completed;
 
-            thread.Start();  
+            davePostThread.Start();  
         }
 
         /// <summary>
@@ -257,8 +267,8 @@ namespace RedditSaveTransfer
                 toSave = new List<SavedListing>(savedPosts);
             else
             {
-                bool pulledFromBigList = false;
-                List<SavedListing> toRemove = new List<SavedListing>();
+                var pulledFromBigList = false;
+                var toRemove = new List<SavedListing>();
 
                 //Loop through selected rows
                 foreach (DataGridViewRow c in dataGridView1.SelectedRows)
@@ -267,18 +277,17 @@ namespace RedditSaveTransfer
                     if (!pulledFromBigList)
                     {
                         pulledFromBigList = true;
-                        foreach (SavedListing listing in savedPosts)
+                        foreach (var listing in savedPosts)
                         {
-                            bool add = true;
-                            foreach (KeyValuePair<string, string> pair in listing.Properties)
+                            var add = true;
+                            foreach (var pair in listing.Properties)
                             {
-                                if (pair.Key == c.Cells[0].Value.ToString())
-                                {
-                                    if (pair.Value == c.Cells[1].Value.ToString())
-                                        break;
-                                    else
-                                        add = false;
-                                }
+                                if (pair.Key != c.Cells[0].Value.ToString()) continue;
+
+                                if (pair.Value == c.Cells[1].Value.ToString())
+                                    break;
+                                    
+                                add = false;
                             }
 
                             if (add)
@@ -287,18 +296,17 @@ namespace RedditSaveTransfer
                     }
                     else //Second run and on - look through the filtered list
                     {
-                        foreach (SavedListing listing in toSave)
+                        foreach (var listing in toSave)
                         {
-                            bool remove = false;
-                            foreach (KeyValuePair<string, string> pair in listing.Properties)
+                            var remove = false;
+                            foreach (var pair in listing.Properties)
                             {
-                                if (pair.Key == c.Cells[0].Value.ToString())
-                                {
-                                    if (pair.Value == c.Cells[1].Value.ToString())
-                                        break;
-                                    else
-                                        remove = true;
-                                }
+                                if (pair.Key != c.Cells[0].Value.ToString()) continue;
+
+                                if (pair.Value == c.Cells[1].Value.ToString())
+                                    break;
+
+                                remove = true;
                             }
 
                             if (remove)
@@ -308,7 +316,7 @@ namespace RedditSaveTransfer
                 }
 
                 //Remove listings that don't match
-                foreach (SavedListing listing in toRemove)
+                foreach (var listing in toRemove)
                     toSave.Remove(listing);
 
                 Console.WriteLine("Found " + toSave.Count + " posts.");
@@ -329,12 +337,12 @@ namespace RedditSaveTransfer
             //If we need to unsave the posts in the LEFT account
             if (chkUnsaveAfter.Checked)
             {
-                SavePostThread thread = new SavePostThread(redditCookie1, userAgent, toSave, false);
+                var savePostThread = new SavePostThread(redditCookie1, toSave, false);
 
-                thread.Thread.ProgressChanged += new ProgressChangedEventHandler(UnSavePosts_ProgressChanged);
-                thread.Thread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(UnSavePosts_Completed);
+                savePostThread.Thread.ProgressChanged += UnSavePosts_ProgressChanged;
+                savePostThread.Thread.RunWorkerCompleted += UnSavePosts_Completed;
 
-                thread.Start();
+                savePostThread.Start();
             }
             else
             {
@@ -360,11 +368,11 @@ namespace RedditSaveTransfer
         {
             Console.WriteLine("DONE");
 
-            foreach (SavedListing listing in toSave)
+            foreach (var listing in toSave)
                 savedPosts.Remove(listing);
 
-            currentPost = 0;
-            dataGridView1.DataSource = savedPosts[currentPost].Properties;
+            _currentPost = 0;
+            dataGridView1.DataSource = savedPosts[_currentPost].Properties;
 
             UpdateSelectionText();
             
@@ -381,12 +389,12 @@ namespace RedditSaveTransfer
         {
             statusLabel.Text = "Grabbing Saved Posts...";
 
-            GetSavedThread thread = new GetSavedThread(redditCookie1, userAgent);
+            var getSavedThread = new GetSavedThread(redditCookie1);
 
-            thread.Thread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(GrabPosts_Completed);
-            thread.Thread.ProgressChanged += new ProgressChangedEventHandler(GrabPosts_ProgressChanged);
+            getSavedThread.Thread.RunWorkerCompleted += GrabPosts_Completed;
+            getSavedThread.Thread.ProgressChanged += GrabPosts_ProgressChanged;
 
-            thread.Start();
+            getSavedThread.Start();
         }
 
         void GrabPosts_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -412,10 +420,10 @@ namespace RedditSaveTransfer
 
                     Console.WriteLine("Total Posts: " + savedPosts.Count);
 
-                    currentPost = 0;
+                    _currentPost = 0;
 
                     dataGridView1.DataSource = null;
-                    dataGridView1.DataSource = savedPosts[currentPost].Properties;
+                    dataGridView1.DataSource = savedPosts[_currentPost].Properties;
 
                     dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                     dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -436,9 +444,9 @@ namespace RedditSaveTransfer
         }
 
         //Outputs the given JSON data - for testing
-        void PrintJSON(string json)
+        void PrintJson(string json)
         {
-            JsonTextReader reader = new JsonTextReader(new StringReader(json));
+            var reader = new JsonTextReader(new StringReader(json));
 
             while (reader.Read())
             {
@@ -451,14 +459,14 @@ namespace RedditSaveTransfer
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            if (currentPost + 1 < savedPosts.Count)
-                currentPost++;
+            if (_currentPost + 1 < savedPosts.Count)
+                _currentPost++;
             else
-                currentPost = 0;
+                _currentPost = 0;
 
             if (savedPosts.Count > 0)
             {
-                dataGridView1.DataSource = savedPosts[currentPost].Properties;
+                dataGridView1.DataSource = savedPosts[_currentPost].Properties;
 
                 dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -469,14 +477,14 @@ namespace RedditSaveTransfer
 
         private void btnPrevious_Click(object sender, EventArgs e)
         {
-            if (currentPost - 1 >= 0)
-                currentPost--;
+            if (_currentPost - 1 >= 0)
+                _currentPost--;
             else
-                currentPost = savedPosts.Count - 1;
+                _currentPost = savedPosts.Count - 1;
 
             if (savedPosts.Count > 0)
             {
-                dataGridView1.DataSource = savedPosts[currentPost].Properties;
+                dataGridView1.DataSource = savedPosts[_currentPost].Properties;
 
                 dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -488,7 +496,7 @@ namespace RedditSaveTransfer
         private void UpdateSelectionText()
         {
             if (savedPosts.Count > 0)
-                statusLabel.Text = "[" + (currentPost + 1).ToString() + "/" + savedPosts.Count + "]";
+                statusLabel.Text = "[" + (_currentPost + 1).ToString() + "/" + savedPosts.Count + "]";
             else
                 statusLabel.Text = "[List Empty]";
         }
@@ -497,13 +505,15 @@ namespace RedditSaveTransfer
         {
             FilterPosts(chkMatchRows.Checked);
 
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            
-            saveFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
-            saveFileDialog.Filter = "HTML Files (*.html) |*.html; *.HTML; *.Html |CSV Files (*.csv) |*.csv; *.CSV; *.Csv |All files (*.*)|*.*";
-            saveFileDialog.FilterIndex = 0;
-            saveFileDialog.RestoreDirectory = true;
-            saveFileDialog.Title = "Export " + toSave.Count + " Posts...";
+            var saveFileDialog = new SaveFileDialog
+            {
+                InitialDirectory = Directory.GetCurrentDirectory(),
+                Filter =
+                    "HTML Files (*.html) |*.html; *.HTML; *.Html |CSV Files (*.csv) |*.csv; *.CSV; *.Csv |All files (*.*)|*.*",
+                FilterIndex = 0,
+                RestoreDirectory = true,
+                Title = "Export " + toSave.Count + " Posts..."
+            };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -511,17 +521,16 @@ namespace RedditSaveTransfer
                 {
                     Console.WriteLine("File Extension: " + Path.GetExtension(saveFileDialog.FileName.ToLower()));
 
-                    if (Path.GetExtension(saveFileDialog.FileName.ToLower()) == ".csv")
+                    switch (Path.GetExtension(saveFileDialog.FileName.ToLower()))
                     {
-                        CsvExport csv = new CsvExport(toSave);
-
-                        csv.ExportToFile(saveFileDialog.FileName);
-                    }
-                    else if (Path.GetExtension(saveFileDialog.FileName.ToLower()) == ".html")
-                    {
-                        HTMLExport html = new HTMLExport(toSave);
-
-                        html.ExportToFile(saveFileDialog.FileName);
+                        case ".csv":
+                            var csv = new CsvExport(toSave);
+                            csv.ExportToFile(saveFileDialog.FileName);
+                            break;
+                        case ".html":
+                            var html = new HtmlExport(toSave);
+                            html.ExportToFile(saveFileDialog.FileName);
+                            break;
                     }
                 }
                 catch (Exception ex)
@@ -536,7 +545,13 @@ namespace RedditSaveTransfer
         {
             if (!String.IsNullOrEmpty(txtUsername2.Text) && !String.IsNullOrEmpty(txtPassword2.Text))
             {
-                string message = "";
+                if (Settings.Default.SaveUsername2)
+                {
+                    Settings.Default.Username2 = txtUsername2.Text;
+                    Settings.Default.Save();
+                }
+
+                var message = "";
 
                 FilterPosts(chkMatchRows.Checked);
 
@@ -604,12 +619,12 @@ namespace RedditSaveTransfer
             {
                 FilterPosts(chkMatchRows.Checked);
 
-                SavePostThread thread = new SavePostThread(redditCookie1, userAgent, toSave, false);
+                var savePostThread = new SavePostThread(redditCookie1, toSave, false);
 
-                thread.Thread.ProgressChanged += new ProgressChangedEventHandler(UnSavePosts_ProgressChanged);
-                thread.Thread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(UnSavePosts_Completed);
+                savePostThread.Thread.ProgressChanged += UnSavePosts_ProgressChanged;
+                savePostThread.Thread.RunWorkerCompleted += UnSavePosts_Completed;
 
-                thread.Start();
+                savePostThread.Start();
             }
             else if (result == DialogResult.No)
             {
@@ -654,31 +669,19 @@ namespace RedditSaveTransfer
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            if (!File.Exists("firstrun"))
-            {
-                ShowHelp();
-                File.Create("firstrun");
-            }
+            if (!Settings.Default.FirstRun) return;
+
+            ShowHelp();
+
+            Settings.Default.FirstRun = false;
+            Settings.Default.Save();
         }
 
         private void btnExportOptions_Click(object sender, EventArgs e)
         {
-            SelectPropertiesWindow properties = new SelectPropertiesWindow();
+            var properties = new SelectPropertiesWindow {StartPosition = FormStartPosition.CenterParent};
 
-            properties.StartPosition = FormStartPosition.CenterParent;
-
-            DialogResult result = properties.ShowDialog();
-
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
-                SelectPropertiesWindow.PropertiesToExport.Clear();
-
-                foreach (Object p in properties.chkListBoxProps.CheckedItems)
-                    SelectPropertiesWindow.PropertiesToExport.Add(p.ToString());
-
-                foreach (string s in SelectPropertiesWindow.PropertiesToExport)
-                    Console.WriteLine(s);
-            }
+            properties.ShowDialog();
         }
 
     }
