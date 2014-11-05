@@ -1,11 +1,16 @@
-﻿namespace RedditSaveTransfer
+﻿using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace RedditSaveTransfer
 {
     partial class SelectPropertiesWindow
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -146,8 +151,6 @@
             // 
             // SelectPropertiesWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(290, 290);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSelectAll);
@@ -159,18 +162,18 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(306, 328);
             this.Name = "SelectPropertiesWindow";
-            this.Text = "Properties to Export to HTML...";
+            this.Text = "HTML Export Properties...";
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button btnAccept;
-        private System.Windows.Forms.Button btnCancel;
-        public System.Windows.Forms.CheckedListBox chkListBoxProps;
-        private System.Windows.Forms.Button btnDefault;
-        private System.Windows.Forms.Button btnSelectAll;
-        private System.Windows.Forms.Button btnClear;
+        private Button btnAccept;
+        private Button btnCancel;
+        public CheckedListBox chkListBoxProps;
+        private Button btnDefault;
+        private Button btnSelectAll;
+        private Button btnClear;
     }
 }

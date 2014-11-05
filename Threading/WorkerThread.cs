@@ -1,54 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
-namespace RedditSaveTransfer
+namespace RedditSaveTransfer.Threading
 {
     /// <summary>
     /// Basic class used for threading
     /// </summary>
     public class WorkerThread
     {
-        BackgroundWorker thread;
-
-        public BackgroundWorker Thread
-        {
-            get { return thread; }
-        }
+        public BackgroundWorker Thread { get; private set; }
 
         public WorkerThread()
         {
-            thread = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
+            Thread = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
 
-            thread.DoWork += new DoWorkEventHandler(thread_DoWork);
-            thread.ProgressChanged += new ProgressChangedEventHandler(thread_ProgressChanged);
-            thread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(thread_RunWorkerCompleted);
+            Thread.DoWork += thread_DoWork;
+            Thread.ProgressChanged += thread_ProgressChanged;
+            Thread.RunWorkerCompleted += thread_RunWorkerCompleted;
         }
 
         public void Start()
         {
-            thread.RunWorkerAsync();
+            Thread.RunWorkerAsync();
         }
 
         public void Stop()
         {
-            thread.CancelAsync();
-            thread.Dispose();
+            Thread.CancelAsync();
+            Thread.Dispose();
         }
 
-        public virtual void thread_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        protected virtual void thread_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
 
         }
 
-        public virtual void thread_DoWork(object sender, DoWorkEventArgs e)
+        protected virtual void thread_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (thread.CancellationPending)
+            if (Thread.CancellationPending)
                 return;
         }
 
-        public virtual void thread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        protected virtual void thread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
 
         }
