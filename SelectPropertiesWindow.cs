@@ -32,7 +32,7 @@ namespace RedditSaveTransfer
             {
                 var index = chkListBoxProps.Items.IndexOf(p);
 
-                if (index <= 0 || index >= chkListBoxProps.Items.Count)
+                if (index < 0 || index >= chkListBoxProps.Items.Count)
                     continue;
 
                 chkListBoxProps.SetItemChecked(index, true);
