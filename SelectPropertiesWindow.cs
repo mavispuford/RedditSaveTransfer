@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using RedditSaveTransfer.Properties;
@@ -8,8 +7,6 @@ namespace RedditSaveTransfer
 {
     public partial class SelectPropertiesWindow : Form
     {
-        public static readonly string[] DefaultPropertiesToExport = {"subreddit", "url", "title", "created_utc"};
-        public static List<string> PropertiesToExport = Settings.Default.PropertiesToExport.Split(',').ToList();
 
         public SelectPropertiesWindow()
         {
@@ -23,25 +20,22 @@ namespace RedditSaveTransfer
 
         private void SetPropertiesToExport()
         {
-            PropertiesToExport.Clear();
+            Common.PropertiesToExport.Clear();
 
-            if (chkListBoxProps.CheckedItems.Count > 0)
-            {
-                foreach (var p in chkListBoxProps.CheckedItems)
-                    PropertiesToExport.Add(p.ToString());
-            }
-            else
-            {
-                foreach (var p in DefaultPropertiesToExport)
-                    PropertiesToExport.Add(p);
-            }
+            foreach (var p in chkListBoxProps.CheckedItems)
+                Common.PropertiesToExport.Add(p.ToString());
         }
 
         private void SetCheckedItems()
         {
-            foreach (var p in PropertiesToExport)
+            foreach (var p in Common.PropertiesToExport)
             {
-                chkListBoxProps.SetItemChecked(chkListBoxProps.Items.IndexOf(p), true);
+                var index = chkListBoxProps.Items.IndexOf(p);
+
+                if (index <= 0 || index >= chkListBoxProps.Items.Count)
+                    continue;
+
+                chkListBoxProps.SetItemChecked(index, true);
 
                 Console.WriteLine(p);
             }
@@ -49,11 +43,17 @@ namespace RedditSaveTransfer
 
         private void btnAccept_Click(object sender, EventArgs e)
         {
+            if (chkListBoxProps.CheckedItems.Count == 0)
+            {
+                MessageBox.Show("You must have at least one property selected.");
+                return;
+            }
+
             SetPropertiesToExport();
 
-            if (PropertiesToExport != null && PropertiesToExport.Any())
+            if (Common.PropertiesToExport != null && Common.PropertiesToExport.Any())
             {
-                Settings.Default.PropertiesToExport = String.Join(",", PropertiesToExport.ToArray());
+                Settings.Default.PropertiesToExport = String.Join(",", Common.PropertiesToExport.ToArray());
                 Settings.Default.Save();
             }
 
@@ -64,7 +64,7 @@ namespace RedditSaveTransfer
         {
             CheckUncheckAll(false);
 
-            foreach (var p in DefaultPropertiesToExport)
+            foreach (var p in Common.DefaultPropertiesToExport)
                 chkListBoxProps.SetItemChecked(chkListBoxProps.Items.IndexOf(p), true);
         }
 

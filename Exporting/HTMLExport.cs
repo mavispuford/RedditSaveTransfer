@@ -23,7 +23,7 @@ namespace RedditSaveTransfer.Exporting
         {
             var sb = new StringBuilder();
 
-            var fields = SelectPropertiesWindow.PropertiesToExport;
+            var fields = Common.PropertiesToExport;
 
             sb.Append("<!DOCTYPE html>\n<html>\n");
 

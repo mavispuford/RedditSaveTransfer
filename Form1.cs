@@ -40,6 +40,17 @@ namespace RedditSaveTransfer
 
             if (Settings.Default.SaveUsername2)
                 txtUsername2.Text = Settings.Default.Username2;
+
+            if (!string.IsNullOrEmpty(Settings.Default.PropertiesToExport))
+            {
+                Common.PropertiesToExport = new HashSet<string>(Settings.Default.PropertiesToExport.Split(','));
+            }
+            else
+            {
+                Common.PropertiesToExport = new HashSet<string>(Common.DefaultPropertiesToExport);
+                Settings.Default.PropertiesToExport = String.Join(",", Common.PropertiesToExport.ToArray());
+                Settings.Default.Save();
+            }
         }
         
         protected override void OnLoad(EventArgs e)
