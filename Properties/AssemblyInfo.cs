@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("RedditSaveTransfer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hewlett-Packard Company")]
+[assembly: AssemblyCompany("MavisPuford")]
 [assembly: AssemblyProduct("RedditSaveTransfer")]
-[assembly: AssemblyCopyright("Copyright © Hewlett-Packard Company 2012")]
+[assembly: AssemblyCopyright("Copyright © MavisPuford")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
