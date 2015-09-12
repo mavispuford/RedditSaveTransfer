@@ -30,7 +30,12 @@ namespace RedditSaveTransfer
                 Credentials = proxy.Credentials,
                 Address = proxy.GetProxy(request.RequestUri)
             };
-            request.Proxy = wp;
+
+            // If there is no proxy set up, it will end up being the same as the request Uri
+            if (!wp.Address.Equals(request.RequestUri))
+            {
+                request.Proxy = wp;
+            }
 
             //Encode the data
             using (var writeStream = request.GetRequestStream())
@@ -81,7 +86,12 @@ namespace RedditSaveTransfer
                 Credentials = proxy.Credentials,
                 Address = proxy.GetProxy(request.RequestUri)
             };
-            request.Proxy = wp;
+
+            // If there is no proxy set up, it will end up being the same as the request Uri
+            if (!wp.Address.Equals(request.RequestUri))
+            {
+                request.Proxy = wp;
+            }
 
             var result = string.Empty;
 

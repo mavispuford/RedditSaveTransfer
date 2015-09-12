@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
 
 namespace RedditSaveTransfer.Threading
@@ -37,6 +38,7 @@ namespace RedditSaveTransfer.Threading
             var currentId = "current";
             var posts = new List<SavedListing>();
             var savedChunks = new List<JObject>();
+            var emptyResultCount = 0;
 
             // Loop until we dont have an "after" id
             do
@@ -51,11 +53,24 @@ namespace RedditSaveTransfer.Threading
                 else
                     result = HttpUtility.SendGet(Common.BaseUrl + "/saved.json?limit=100", _cookie);
 
-                savedChunks.Add(JObject.Parse(result));
+                if (string.IsNullOrEmpty(result))
+                {
+                    emptyResultCount++;
 
-                currentId = (string)savedChunks[savedChunks.Count - 1]["data"].SelectToken("after");
+                    if (emptyResultCount >= 3)
+                    {
+                        MessageBox.Show("The request returned 0 results.  Please try again.");
+                        return posts;
+                    }
+                }
+                else
+                {
+                    savedChunks.Add(JObject.Parse(result));
 
-                Console.WriteLine("Current ID: " + currentId);
+                    currentId = (string)savedChunks[savedChunks.Count - 1]["data"].SelectToken("after");
+
+                    Console.WriteLine("Current ID: " + currentId);
+                }
 
                 System.Threading.Thread.Sleep(2000);
 
