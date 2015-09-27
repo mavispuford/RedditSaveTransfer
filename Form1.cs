@@ -383,7 +383,7 @@ namespace RedditSaveTransfer
                 savedPosts.Remove(listing);
 
             _currentPost = 0;
-            dataGridView1.DataSource = savedPosts[_currentPost].Properties;
+            dataGridView1.DataSource = null;
 
             UpdateSelectionText();
             
