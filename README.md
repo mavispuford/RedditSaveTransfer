@@ -1,9 +1,9 @@
-﻿#Reddit Saved Post Transfer Tool#
-By *MavisPuford*
+# Reddit Saved Post Transfer Tool
+# By *MavisPuford*
 
 Yeah, I know.  Creative name!  :)
 
-##DESCRIPTION##
+## DESCRIPTION
 
 This tool lets you load up your saved posts from Reddit.  From there you can Export them to a HTML/CSV file, save them to another account, or get rid of them.  That's about it.
 
@@ -17,7 +17,7 @@ Or if I want to just have a Reddit account for r/food, I can create one and tran
 
 You get the idea...
 
-##INSTRUCTIONS##
+## INSTRUCTIONS
 
 First, put in your credentials and click Load Saved Posts.
 
@@ -33,7 +33,7 @@ Want to unsave just one post?  Just check Match selected rows, go to the post an
 
 They have to be done one at a time, and Reddit's servers have limits on how often you can make requests (about one request every 2 seconds).
 
-##SOURCE INFO##
+## SOURCE INFO
 Requires Microsoft .NET Framework 3.5.
 
 You will also need to enable NuGet package restore which can be found in Visual Studio under "Tools > Options > Package Manager". Then you need to check "Allow NuGet to download missing packages during build".
